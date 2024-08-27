@@ -131,41 +131,60 @@ end
 
 ----- test ----
 
-local InternetGatewayDevice = Node.new("InternetGatewayDevice")
+local Root = Node.new("InternetGatewayDevice")
 
-local DeviceInfo            = Node.new("DeviceInfo")
+local DevInfo            = Node.new("DeviceInfo")
 
 
 local ManagementServer      = Node.new("ManagementServer.")
 local IP                    = Node.new("IP")
 
-local MemoryStatus          = Node.new("MemoryStatus")
+local MemStatus          = Node.new("MemoryStatus")
+
+local MemoryCh1          = Node.new("MemoryCh1")
+local MemoryCh2          = Node.new("MemoryCh2")
 
 
 local t1          = Node.new("t1")
 local t2          = Node.new("t2")
 local t11          = Node.new("t11")
 
-InternetGatewayDevice:addChild(DeviceInfo)
-InternetGatewayDevice:addChild(ManagementServer)
-InternetGatewayDevice:addChild(IP)
-DeviceInfo:addChild(MemoryStatus)
-DeviceInfo:addParamter("SpecVersion", "0", "1223444", "xsd:string")
-MemoryStatus:addChild(t1)
-MemoryStatus:addChild(t2)
+Root:addChild(DevInfo)
+Root:addChild(ManagementServer)
+Root:addChild(IP)
+DevInfo:addChild(MemStatus)
+DevInfo:addParamter("SpecVersion", "0", "1223444", "xsd:string")
+DevInfo:addParamter("Manufacturer", "0", "HZJM", "xsd:string")
+DevInfo:addParamter("ManufacturerOUI", "0", "HZ-JM", "xsd:string")
+
+MemStatus:addChild(t1)
+MemStatus:addChild(t2)
 t1:addChild(t11)
-MemoryStatus:addParamter("Total", "0", "0", "xsd:string")
-MemoryStatus:addParamter("Free",  "0", "0", "xsd:string")
+MemStatus:addParamter("Total", "0", "0", "xsd:string")
+MemStatus:addParamter("Free",  "0", "0", "xsd:string")
+
+MemoryCh1:addParamter("x",  "0", "ch1", "xsd:string")
+MemoryCh2:addParamter("x",  "0", "ch2", "xsd:string")
+
+MemStatus:addChild(MemoryCh1)
+MemoryCh1:addChild(MemoryCh2)
+
+printTree(Root)
+
+print(Root:getParamterValueJson(MemStatus, "Total"))
+print(Root:getParamterNameJson(MemStatus, "Free"))
+print(Root:getNodeNameJson(MemStatus))
+
+print(Root:getParamterValueJson(DevInfo, "Manufacturer"))
+print(Root:getParamterNameJson(DevInfo, "ManufacturerOUI"))
+print(Root:getNodeNameJson(DevInfo))
 
 
-printTree(InternetGatewayDevice)
+print(Root:getParamterValueJson(MemoryCh2, "x"))
+print(Root:getNodeNameJson(MemoryCh2))
 
-print(InternetGatewayDevice:getParamterValueJson(MemoryStatus, "Total"))
-print(InternetGatewayDevice:getParamterNameJson(MemoryStatus, "Free"))
-print(InternetGatewayDevice:getNodeNameJson(MemoryStatus))
-
-InternetGatewayDevice:remove(t1)
-printTree(InternetGatewayDevice)
+Root:remove(t1)
+printTree(Root)
 
 print("==================================")
 --[[
